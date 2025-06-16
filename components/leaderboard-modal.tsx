@@ -456,7 +456,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
               </div>
             </div>
 
-            <div className="max-h-[55vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent bg-transparent">
+            <div className="max-h-[55vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent bg-transparent px-4 pb-4">
               {loading ? (
                 <div className="flex justify-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800 dark:border-white"></div>
@@ -481,7 +481,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                         return (
                           <tr
                             key={user.id}
-                            className={`group transition-all hover:scale-[1.01] hover:shadow-md bg-gray-900/90 dark:bg-gray-900/90 border-0 rounded-xl`}
+                            className={`group transition-all hover:scale-[1.01] hover:shadow-md bg-gray-900/90 dark:bg-gray-900/90 border-0 rounded-lg`}
                             style={{ boxShadow }}
                             onMouseEnter={(e) => handleUserHover(user, e)}
                             onMouseLeave={() => setHoveredUser(null)}
