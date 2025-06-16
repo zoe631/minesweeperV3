@@ -394,8 +394,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   return (
     <>
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <Card className="w-full max-w-4xl bg-white dark:bg-gray-800 max-h-[90vh] overflow-hidden shadow-2xl rounded-2xl border-0">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-gray-200 dark:border-gray-700">
+        <Card className="w-full max-w-3xl bg-white/90 dark:bg-gray-900/95 max-h-[80vh] overflow-hidden shadow-xl rounded-2xl border-0 backdrop-blur-md">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-gray-200 dark:border-gray-800">
             <div>
               <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                 <Trophy className="h-6 w-6 text-yellow-500" />
@@ -416,9 +416,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
               </Button>
             </div>
           </CardHeader>
-
           <CardContent className="p-0">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-800">
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Category</label>
@@ -457,7 +456,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
               </div>
             </div>
 
-            <div className="max-h-[60vh] overflow-y-auto">
+            <div className="max-h-[55vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent">
               {loading ? (
                 <div className="flex justify-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800 dark:border-white"></div>
@@ -466,7 +465,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-sm border-separate border-spacing-y-2">
                     <thead>
-                      <tr className="bg-gray-100 dark:bg-gray-700/60 text-gray-700 dark:text-gray-200">
+                      <tr className="bg-transparent text-gray-700 dark:text-gray-300">
                         <th className="px-3 py-2 rounded-l-xl text-left font-semibold">#</th>
                         <th className="px-3 py-2 text-left font-semibold">User</th>
                         <th className="px-3 py-2 text-left font-semibold">Level</th>
@@ -477,7 +476,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                       {leaderboardData.map((user, index) => (
                         <tr
                           key={user.id}
-                          className={`group transition-shadow hover:shadow-lg bg-white dark:bg-gray-800/80 border border-gray-100 dark:border-gray-700 rounded-xl ${index < 3 ? "ring-2 ring-yellow-400/40 dark:ring-yellow-600/40" : ""}`}
+                          className={`group transition-all hover:scale-[1.015] hover:shadow-lg bg-white/70 dark:bg-gray-800/80 border-0 rounded-xl ${index < 3 ? "ring-2 ring-yellow-400/40 dark:ring-yellow-600/40" : ""}`}
+                          style={{ boxShadow: index < 3 ? '0 2px 16px 0 rgba(255, 215, 0, 0.08)' : undefined }}
                           onMouseEnter={(e) => handleUserHover(user, e)}
                           onMouseLeave={() => setHoveredUser(null)}
                         >
@@ -505,17 +505,17 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                   {user.customRole ? (
                                     <Badge
                                       style={{
-                                        backgroundColor: `${user.customRoleColor}20`,
-                                        color: user.customRoleColor,
-                                        borderColor: user.customRoleColor,
+                                        backgroundColor: user.customRoleColor ? `${user.customRoleColor}33` : '#222',
+                                        color: user.customRoleColor || '#fff',
+                                        borderColor: user.customRoleColor || '#222',
                                       }}
-                                      className="text-xs border"
+                                      className="text-xs border border-0 px-2 py-0.5 rounded-full font-semibold shadow-none bg-opacity-80 dark:bg-opacity-80"
                                     >
                                       {user.customRole}
                                     </Badge>
                                   ) : (
                                     user.role !== "user" && (
-                                      <Badge className={`text-xs ${getRoleColor(user.role)}`}>{getRoleName(user.role)}</Badge>
+                                      <Badge className={`text-xs px-2 py-0.5 rounded-full font-semibold shadow-none bg-gray-800/80 text-gray-100 border-0 dark:bg-gray-700/80 dark:text-gray-200`}>{getRoleName(user.role)}</Badge>
                                     )
                                   )}
                                 </div>
