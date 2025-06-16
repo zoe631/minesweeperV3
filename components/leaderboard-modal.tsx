@@ -462,7 +462,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800 dark:border-white"></div>
                 </div>
               ) : leaderboardData.length > 0 ? (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-visible">
                   <table className="min-w-full text-sm border-separate border-spacing-y-2 bg-transparent">
                     <thead>
                       <tr className="bg-transparent text-gray-700 dark:text-gray-300">
@@ -473,78 +473,84 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                       </tr>
                     </thead>
                     <tbody>
-                      {leaderboardData.map((user, index) => (
-                        <tr
-                          key={user.id}
-                          className={`group transition-all hover:scale-[1.01] hover:shadow-md bg-gray-900/90 dark:bg-gray-900/90 border-0 rounded-xl ${index < 3 ? "ring-2 ring-yellow-400/30 dark:ring-yellow-600/30" : ""}`}
-                          style={{ boxShadow: index < 3 ? '0 2px 16px 0 rgba(255, 215, 0, 0.06)' : undefined }}
-                          onMouseEnter={(e) => handleUserHover(user, e)}
-                          onMouseLeave={() => setHoveredUser(null)}
-                        >
-                          <td className="px-3 py-2 align-middle font-bold text-lg text-center rounded-l-xl">
-                            {getRankIcon(index + 1)}
-                          </td>
-                          <td className="px-3 py-2 align-middle">
-                            <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden border border-gray-300 dark:border-gray-600">
-                                {user.photoURL ? (
-                                  <img
-                                    src={user.photoURL || "/placeholder.svg"}
-                                    alt={user.username}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <span className="text-base font-bold text-gray-600 dark:text-gray-300">
-                                    {user.username.charAt(0).toUpperCase()}
-                                  </span>
-                                )}
-                              </div>
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium text-gray-900 dark:text-white">{user.username}</span>
-                                  {user.customRole ? (
-                                    <Badge
-                                      style={{
-                                        backgroundColor: '#181C23', // тёмный фон
-                                        color: user.customRoleColor || '#fff',
-                                        borderColor: user.customRoleColor || '#222',
-                                      }}
-                                      className="text-xs px-2 py-0.5 rounded-full font-semibold shadow-none border-0"
-                                    >
-                                      {user.customRole}
-                                    </Badge>
+                      {leaderboardData.map((user, index) => {
+                        let boxShadow = undefined
+                        if (index === 0) boxShadow = '0 4px 24px 0 rgba(255,255,255,0.18)'
+                        if (index === 1) boxShadow = '0 4px 24px 0 rgba(255,255,255,0.09)'
+                        if (index === 2) boxShadow = '0 4px 24px 0 rgba(255,255,255,0.045)'
+                        return (
+                          <tr
+                            key={user.id}
+                            className={`group transition-all hover:scale-[1.01] hover:shadow-md bg-gray-900/90 dark:bg-gray-900/90 border-0 rounded-xl`}
+                            style={{ boxShadow }}
+                            onMouseEnter={(e) => handleUserHover(user, e)}
+                            onMouseLeave={() => setHoveredUser(null)}
+                          >
+                            <td className="px-3 py-2 align-middle font-bold text-lg text-center rounded-l-xl">
+                              {getRankIcon(index + 1)}
+                            </td>
+                            <td className="px-3 py-2 align-middle">
+                              <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden border border-gray-300 dark:border-gray-600">
+                                  {user.photoURL ? (
+                                    <img
+                                      src={user.photoURL || "/placeholder.svg"}
+                                      alt={user.username}
+                                      className="w-full h-full object-cover"
+                                    />
                                   ) : (
-                                    user.role !== "user" && (
-                                      <Badge
-                                        className={`text-xs px-2 py-0.5 rounded-full font-semibold shadow-none border-0 bg-gray-900/90 dark:bg-gray-900/90 ${getRoleColor(user.role)}`}
-                                        style={{backgroundColor: '#181C23'}}
-                                      >
-                                        {getRoleName(user.role)}
-                                      </Badge>
-                                    )
+                                    <span className="text-base font-bold text-gray-600 dark:text-gray-300">
+                                      {user.username.charAt(0).toUpperCase()}
+                                    </span>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                                  <Star className="h-3 w-3 text-yellow-500" />
-                                  <span>#{user.userId}</span>
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium text-gray-900 dark:text-white">{user.username}</span>
+                                    {user.customRole ? (
+                                      <Badge
+                                        style={{
+                                          backgroundColor: '#181C23', // тёмный фон
+                                          color: user.customRoleColor || '#fff',
+                                          borderColor: user.customRoleColor || '#222',
+                                        }}
+                                        className="text-xs px-2 py-0.5 rounded-full font-semibold shadow-none border-0"
+                                      >
+                                        {user.customRole}
+                                      </Badge>
+                                    ) : (
+                                      user.role !== "user" && (
+                                        <Badge
+                                          className={`text-xs px-2 py-0.5 rounded-full font-semibold shadow-none border-0 bg-gray-900/90 dark:bg-gray-900/90 ${getRoleColor(user.role)}`}
+                                          style={{backgroundColor: '#181C23'}}
+                                        >
+                                          {getRoleName(user.role)}
+                                        </Badge>
+                                      )
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                                    <Star className="h-3 w-3 text-yellow-500" />
+                                    <span>#{user.userId}</span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                          <td className="px-3 py-2 align-middle">
-                            <span className="inline-flex items-center gap-1 font-semibold text-purple-400 dark:text-purple-300">
-                              <Star className="h-4 w-4" />
-                              {user.level}
-                            </span>
-                          </td>
-                          <td className="px-3 py-2 align-middle font-semibold text-right rounded-r-xl text-gray-100 dark:text-gray-100">
-                            {getValueDisplay(user)}
-                            {activeCategory === "games" && (
-                              <div className="text-xs text-gray-400 dark:text-gray-400">{user.gamesWon} wins</div>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
+                            </td>
+                            <td className="px-3 py-2 align-middle">
+                              <span className="inline-flex items-center gap-1 font-semibold text-purple-400 dark:text-purple-300">
+                                <Star className="h-4 w-4" />
+                                {user.level}
+                              </span>
+                            </td>
+                            <td className="px-3 py-2 align-middle font-semibold text-right rounded-r-xl text-gray-100 dark:text-gray-100">
+                              {getValueDisplay(user)}
+                              {activeCategory === "games" && (
+                                <div className="text-xs text-gray-400 dark:text-gray-400">{user.gamesWon} wins</div>
+                              )}
+                            </td>
+                          </tr>
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>
