@@ -2838,6 +2838,48 @@ export default function AdminPage() {
                       placeholder="0.0.3.5"
                       className="bg-gray-700 border-gray-600 text-white"
                     />
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="bg-gray-700 text-white border border-gray-600 hover:bg-gray-600"
+                        onClick={() => {
+                          // Автоинкремент последней цифры
+                          const parts = currentAppVersion.replace(/^v/, '').split('.');
+                          if (parts.length > 0) {
+                            const last = parseInt(parts[parts.length - 1], 10) || 0;
+                            parts[parts.length - 1] = String(last + 1);
+                            setNewVersion(parts.join('.'));
+                          }
+                        }}
+                      >
+                        +1 Patch
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="bg-gray-700 text-white border border-gray-600 hover:bg-gray-600"
+                        onClick={() => setNewVersion(currentAppVersion + ' fix')}
+                      >
+                        Fix
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="bg-gray-700 text-white border border-gray-600 hover:bg-gray-600"
+                        onClick={() => setNewVersion(currentAppVersion + ' update')}
+                      >
+                        Update
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="bg-gray-700 text-white border border-gray-600 hover:bg-gray-600"
+                        onClick={() => setNewVersion(currentAppVersion + ' beta')}
+                      >
+                        Beta
+                      </Button>
+                    </div>
                   </div>
 
                   <Button
