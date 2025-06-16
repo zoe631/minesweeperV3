@@ -395,7 +395,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
     <>
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
         <Card className="w-full max-w-3xl bg-white/90 dark:bg-gray-900/95 max-h-[80vh] overflow-hidden shadow-xl rounded-2xl border-0 backdrop-blur-md">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-gray-200 dark:border-gray-800">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-transparent">
             <div>
               <CardTitle className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
                 <Trophy className="h-6 w-6 text-yellow-500" />
@@ -416,8 +416,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
               </Button>
             </div>
           </CardHeader>
-          <CardContent className="p-0">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+          <CardContent className="p-0 bg-transparent">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-800 bg-transparent">
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">Category</label>
@@ -456,14 +456,14 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
               </div>
             </div>
 
-            <div className="max-h-[55vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent">
+            <div className="max-h-[55vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent bg-transparent">
               {loading ? (
                 <div className="flex justify-center py-12">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-800 dark:border-white"></div>
                 </div>
               ) : leaderboardData.length > 0 ? (
                 <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm border-separate border-spacing-y-2">
+                  <table className="min-w-full text-sm border-separate border-spacing-y-2 bg-transparent">
                     <thead>
                       <tr className="bg-transparent text-gray-700 dark:text-gray-300">
                         <th className="px-3 py-2 rounded-l-xl text-left font-semibold">#</th>
@@ -476,8 +476,8 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                       {leaderboardData.map((user, index) => (
                         <tr
                           key={user.id}
-                          className={`group transition-all hover:scale-[1.015] hover:shadow-lg bg-white/70 dark:bg-gray-800/80 border-0 rounded-xl ${index < 3 ? "ring-2 ring-yellow-400/40 dark:ring-yellow-600/40" : ""}`}
-                          style={{ boxShadow: index < 3 ? '0 2px 16px 0 rgba(255, 215, 0, 0.08)' : undefined }}
+                          className={`group transition-all hover:scale-[1.01] hover:shadow-md bg-gray-900/90 dark:bg-gray-900/90 border-0 rounded-xl ${index < 3 ? "ring-2 ring-yellow-400/30 dark:ring-yellow-600/30" : ""}`}
+                          style={{ boxShadow: index < 3 ? '0 2px 16px 0 rgba(255, 215, 0, 0.06)' : undefined }}
                           onMouseEnter={(e) => handleUserHover(user, e)}
                           onMouseLeave={() => setHoveredUser(null)}
                         >
@@ -505,17 +505,22 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                                   {user.customRole ? (
                                     <Badge
                                       style={{
-                                        backgroundColor: user.customRoleColor ? `${user.customRoleColor}33` : '#222',
+                                        backgroundColor: '#181C23', // тёмный фон
                                         color: user.customRoleColor || '#fff',
                                         borderColor: user.customRoleColor || '#222',
                                       }}
-                                      className="text-xs border border-0 px-2 py-0.5 rounded-full font-semibold shadow-none bg-opacity-80 dark:bg-opacity-80"
+                                      className="text-xs px-2 py-0.5 rounded-full font-semibold shadow-none border-0"
                                     >
                                       {user.customRole}
                                     </Badge>
                                   ) : (
                                     user.role !== "user" && (
-                                      <Badge className={`text-xs px-2 py-0.5 rounded-full font-semibold shadow-none bg-gray-800/80 text-gray-100 border-0 dark:bg-gray-700/80 dark:text-gray-200`}>{getRoleName(user.role)}</Badge>
+                                      <Badge
+                                        className={`text-xs px-2 py-0.5 rounded-full font-semibold shadow-none border-0 bg-gray-900/90 dark:bg-gray-900/90 ${getRoleColor(user.role)}`}
+                                        style={{backgroundColor: '#181C23'}}
+                                      >
+                                        {getRoleName(user.role)}
+                                      </Badge>
                                     )
                                   )}
                                 </div>
@@ -527,15 +532,15 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                             </div>
                           </td>
                           <td className="px-3 py-2 align-middle">
-                            <span className="inline-flex items-center gap-1 font-semibold text-purple-700 dark:text-purple-300">
+                            <span className="inline-flex items-center gap-1 font-semibold text-purple-400 dark:text-purple-300">
                               <Star className="h-4 w-4" />
                               {user.level}
                             </span>
                           </td>
-                          <td className="px-3 py-2 align-middle font-semibold text-right rounded-r-xl">
+                          <td className="px-3 py-2 align-middle font-semibold text-right rounded-r-xl text-gray-100 dark:text-gray-100">
                             {getValueDisplay(user)}
                             {activeCategory === "games" && (
-                              <div className="text-xs text-gray-500 dark:text-gray-400">{user.gamesWon} wins</div>
+                              <div className="text-xs text-gray-400 dark:text-gray-400">{user.gamesWon} wins</div>
                             )}
                           </td>
                         </tr>
