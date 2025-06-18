@@ -118,7 +118,7 @@ export function SettingsModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md bg-white dark:bg-gray-800">
+      <Card className="w-full max-w-2xl md:max-w-3xl bg-white dark:bg-gray-800">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
             <Settings className="h-5 w-5" />
