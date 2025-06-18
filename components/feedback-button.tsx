@@ -14,10 +14,15 @@ import { collection, addDoc, Timestamp } from "firebase/firestore"
 
 interface FeedbackButtonProps {
   userRole?: string
+  isOpen?: boolean
+  onOpen?: () => void
+  onClose?: () => void
 }
 
-export function FeedbackButton({ userRole }: FeedbackButtonProps) {
-  const [isOpen, setIsOpen] = useState(false)
+export function FeedbackButton({ userRole, isOpen: externalIsOpen, onOpen, onClose }: FeedbackButtonProps) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalOpen
+
   const [feedback, setFeedback] = useState("")
   const [category, setCategory] = useState("bug")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -45,7 +50,8 @@ export function FeedbackButton({ userRole }: FeedbackButtonProps) {
 
       setFeedback("")
       setCategory("bug")
-      setIsOpen(false)
+      if (onClose) onClose();
+      setInternalOpen(false)
       alert("Feedback submitted successfully! Thank you for your input.")
     } catch (error) {
       console.error("Error submitting feedback:", error)
@@ -58,12 +64,15 @@ export function FeedbackButton({ userRole }: FeedbackButtonProps) {
   if (!isOpen) {
     return (
       <Button
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          if (onOpen) onOpen();
+          setInternalOpen(true)
+        }}
         variant="outline"
-        className="fixed bottom-4 left-4 z-40 bg-blue-600 hover:bg-blue-700 text-white border-blue-600"
+        className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900 hover:bg-gray-800 transition-colors border border-gray-800 shadow-lg"
+        title="Send Feedback"
       >
-        <MessageSquare className="h-4 w-4 mr-2" />
-        Feedback
+        <MessageSquare className="h-5 w-5 text-gray-200" />
       </Button>
     )
   }
@@ -73,7 +82,7 @@ export function FeedbackButton({ userRole }: FeedbackButtonProps) {
       <Card className="w-80 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-xl">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <CardTitle className="text-lg font-bold text-gray-800 dark:text-white">Send Feedback</CardTitle>
-          <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)} className="h-6 w-6">
+          <Button variant="ghost" size="icon" onClick={() => { if (onClose) onClose(); setInternalOpen(false) }} className="h-6 w-6">
             <X className="h-4 w-4" />
           </Button>
         </CardHeader>
@@ -125,7 +134,7 @@ export function FeedbackButton({ userRole }: FeedbackButtonProps) {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setIsOpen(false)}
+                onClick={() => { if (onClose) onClose(); setInternalOpen(false) }}
                 className="flex-1"
                 disabled={isSubmitting}
               >

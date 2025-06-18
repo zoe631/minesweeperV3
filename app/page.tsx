@@ -140,6 +140,7 @@ export default function Minesweeper() {
   const [currentVersion, setCurrentVersion] = useState("0.0.3.4") // Default version
   const [isClient, setIsClient] = useState(false)
   const [accessRestriction, setAccessRestriction] = useState<string>("none")
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false)
 
   // Handle client-side mounting and version increment
   useEffect(() => {
@@ -1111,7 +1112,6 @@ export default function Minesweeper() {
       )}
 
       {/* Feedback Button */}
-      <FeedbackButton userRole={userRole} />
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       {user && <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} userId={user.uid} />}
       <LeaderboardModal isOpen={showLeaderboardModal} onClose={() => setShowLeaderboardModal(false)} />
@@ -1133,8 +1133,8 @@ export default function Minesweeper() {
         />
       )}
 
-      {/* Social Links */}
-      <div className="fixed bottom-4 left-4 flex gap-3 z-50">
+      {/* Social & Feedback Buttons */}
+      <div className="fixed bottom-4 left-4 flex gap-2 z-50">
         <a
           href="https://github.com/pvplolpvp009/minesweeperV3"
           target="_blank"
@@ -1157,6 +1157,12 @@ export default function Minesweeper() {
             <path d="M9.036 16.477l-.398 3.934c.57 0 .818-.244 1.116-.537l2.676-2.547 5.553 4.057c1.017.561 1.74.266 1.993-.941l3.617-16.93c.33-1.527-.553-2.125-1.54-1.76L2.36 9.47c-1.49.584-1.472 1.418-.254 1.797l4.6 1.438 10.684-6.74c.504-.326.965-.145.586.181" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </a>
+        <FeedbackButton
+          userRole={userRole}
+          isOpen={showFeedbackModal}
+          onOpen={() => setShowFeedbackModal(true)}
+          onClose={() => setShowFeedbackModal(false)}
+        />
       </div>
     </div>
   )
