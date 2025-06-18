@@ -612,8 +612,9 @@ export default function Minesweeper() {
     }
     document.cookie = `minesweeper_panic=${JSON.stringify(gameData)}; max-age=86400; path=/`
 
-    // Redirect to Google
-    window.location.href = "https://www.google.com"
+    // Redirect to custom panic link from localStorage, fallback to Google
+    const panicUrl = (typeof window !== "undefined" && localStorage.getItem("minesweeper_panic_link")) || "https://www.google.com"
+    window.location.href = panicUrl
   }, [gameState, isDark, hintsRemaining, elapsedTime, gameStartTime])
 
   const handleSignOut = useCallback(async () => {
