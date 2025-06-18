@@ -637,6 +637,20 @@ export function ProfileModal({ isOpen, onClose, userId, readOnly = false }: Prof
                                 {ach.description && (
                                   <div className="text-xs text-gray-500 dark:text-gray-300">{ach.description}</div>
                                 )}
+                                <div className="flex gap-2 mt-1">
+                                  {ach.experience && (
+                                    <span className="inline-flex items-center gap-1 text-xs text-purple-600 dark:text-purple-300 bg-purple-100 dark:bg-purple-900/30 px-2 py-0.5 rounded">
+                                      <Star className="h-3 w-3" />
+                                      +{ach.experience} XP
+                                    </span>
+                                  )}
+                                  {ach.coins && (
+                                    <span className="inline-flex items-center gap-1 text-xs text-yellow-700 dark:text-yellow-300 bg-yellow-100 dark:bg-yellow-900/30 px-2 py-0.5 rounded">
+                                      <Coins className="h-3 w-3" />
+                                      +{ach.coins} Gold
+                                    </span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           ))}
