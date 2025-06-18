@@ -81,10 +81,36 @@ const formatNumber = (num: number) => {
   return num.toString()
 }
 
-function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
+function UserHoverCard({ user, position, onClose, onMouseEnter, onMouseLeave }: UserHoverCardProps & { onMouseEnter?: () => void; onMouseLeave?: () => void }) {
   const [showProfile, setShowProfile] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [userAchievements, setUserAchievements] = useState<any[]>([]);
   const hoverRef = useRef<HTMLDivElement>(null);
+
+  // Загрузка наград пользователя
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      const achievementIds = user.achievements || [];
+      if (achievementIds.length > 0) {
+        const rewardsRef = collection(db, "rewards");
+        const batches = [];
+        for (let i = 0; i < achievementIds.length; i += 10) {
+          batches.push(achievementIds.slice(i, i + 10));
+        }
+        let rewards: any[] = [];
+        for (const batch of batches) {
+          const q = query(rewardsRef, where("__name__", "in", batch));
+          const snap = await getDocs(q);
+          rewards = rewards.concat(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        }
+        setUserAchievements(rewards);
+      } else {
+        setUserAchievements([]);
+      }
+    };
+    fetchAchievements();
+  }, [user.achievements]);
+
   // Не закрывать окно, пока мышь внутри
   useEffect(() => {
     if (!isHovered) return;
@@ -121,8 +147,8 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
         width: 400,
         transition: 'box-shadow 0.2s',
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => { setIsHovered(true); if (onMouseEnter) onMouseEnter(); }}
+      onMouseLeave={() => { setIsHovered(false); if (onMouseLeave) onMouseLeave(); }}
     >
       <Card className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-2xl pointer-events-auto p-2">
         <CardHeader className="pb-3">
@@ -232,17 +258,20 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
             </div>
           )}
           {/* Achievements Preview */}
-          {user.achievements && user.achievements.length > 0 && (
+          {userAchievements && userAchievements.length > 0 && (
             <div>
               <h4 className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Recent Achievements</h4>
               <div className="flex flex-wrap gap-1">
-                {(user.achievements || []).slice(0, 3).map((achievement, index) => (
-                  <Badge key={index} variant="secondary" className="text-xs">
-                    {typeof achievement === 'string' ? achievement : achievement.name}
+                {userAchievements.slice(0, 3).map((achievement, index) => (
+                  <Badge key={achievement.id || index} variant="secondary" className="text-xs flex items-center gap-1">
+                    {achievement.image && (
+                      <img src={achievement.image} alt={achievement.name} className="w-4 h-4 rounded inline-block mr-1" />
+                    )}
+                    {achievement.name}
                   </Badge>
                 ))}
-                {user.achievements && user.achievements.length > 3 && (
-                  <span className="text-xs text-gray-500">+{user.achievements.length - 3} more</span>
+                {userAchievements.length > 3 && (
+                  <span className="text-xs text-gray-500">+{userAchievements.length - 3} more</span>
                 )}
               </div>
             </div>
@@ -264,9 +293,9 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
   const [leaderboardData, setLeaderboardData] = useState<LeaderboardEntry[]>([])
   const [loading, setLoading] = useState(false)
   const [nextUpdate, setNextUpdate] = useState<Date | null>(null)
-  const [hoveredUser, setHoveredUser] = useState<{ user: LeaderboardEntry; position: { x: number; y: number } } | null>(
-    null,
-  )
+  const [hoveredRow, setHoveredRow] = useState<string | null>(null)
+  const [hoveredUser, setHoveredUser] = useState<{ user: LeaderboardEntry; position: { x: number; y: number } } | null>(null)
+  const hoverTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const categories = [
     { id: "experience", name: "Experience & Level", icon: Star, field: "experience" },
@@ -389,10 +418,19 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
 
   const handleUserHover = (user: LeaderboardEntry, event: React.MouseEvent) => {
     const rect = event.currentTarget.getBoundingClientRect()
+    setHoveredRow(user.id)
     setHoveredUser({
       user,
       position: { x: rect.right + 10, y: rect.top },
     })
+    if (hoverTimeout.current) clearTimeout(hoverTimeout.current)
+  }
+
+  const handleUserLeave = () => {
+    hoverTimeout.current = setTimeout(() => {
+      setHoveredRow(null)
+      setHoveredUser(null)
+    }, 200)
   }
 
   const getRankIcon = (position: number) => {
@@ -525,7 +563,7 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
                             className={`group transition-all hover:scale-[1.01] hover:shadow-md bg-gray-900/90 dark:bg-gray-900/90 border-0 rounded-lg`}
                             style={{ boxShadow }}
                             onMouseEnter={(e) => handleUserHover(user, e)}
-                            onMouseLeave={() => setHoveredUser(null)}
+                            onMouseLeave={handleUserLeave}
                           >
                             <td className="px-3 py-2 align-middle font-bold text-lg text-center rounded-l-xl">
                               {getRankIcon(index + 1)}
@@ -608,7 +646,19 @@ export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
 
       {/* User Hover Card */}
       {hoveredUser && (
-        <UserHoverCard user={hoveredUser.user} position={hoveredUser.position} onClose={() => setHoveredUser(null)} />
+        <UserHoverCard
+          user={hoveredUser.user}
+          position={hoveredUser.position}
+          onClose={() => {
+            setHoveredRow(null)
+            setHoveredUser(null)
+          }}
+          onMouseEnter={() => {
+            if (hoverTimeout.current) clearTimeout(hoverTimeout.current)
+            setHoveredRow(hoveredUser.user.id)
+          }}
+          onMouseLeave={handleUserLeave}
+        />
       )}
     </>
   )

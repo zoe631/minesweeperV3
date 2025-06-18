@@ -23,6 +23,7 @@ import {
   Gamepad,
 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
+import { collection, getDocs, query, where } from "firebase/firestore"
 
 interface ProfileModalProps {
   isOpen: boolean
@@ -175,6 +176,7 @@ const getLevelStyle = (level: number) => {
 
 export function ProfileModal({ isOpen, onClose, userId, readOnly = false }: ProfileModalProps & { readOnly?: boolean }) {
   const [userStats, setUserStats] = useState<UserStats | null>(null)
+  const [userAchievements, setUserAchievements] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
   const [editMode, setEditMode] = useState(false)
@@ -184,11 +186,9 @@ export function ProfileModal({ isOpen, onClose, userId, readOnly = false }: Prof
   useEffect(() => {
     const fetchUserData = async () => {
       if (!userId) return
-
       setLoading(true)
       try {
         const userDoc = await getDoc(doc(db, "users", userId))
-
         if (userDoc.exists()) {
           const userData = userDoc.data()
           setUserStats({
@@ -211,6 +211,28 @@ export function ProfileModal({ isOpen, onClose, userId, readOnly = false }: Prof
             achievements: userData.achievements || [],
           })
           setUsername(userData.username || "Player")
+
+          // --- NEW: Load achievements from rewards collection ---
+          const achievementIds = userData.achievements || []
+          if (achievementIds.length > 0) {
+            // Firestore: where('__name__', 'in', [...ids])
+            const rewardsRef = collection(db, "rewards")
+            // Firestore ограничение: максимум 10 id за раз
+            const batches = []
+            for (let i = 0; i < achievementIds.length; i += 10) {
+              batches.push(achievementIds.slice(i, i + 10))
+            }
+            let rewards: any[] = []
+            for (const batch of batches) {
+              const q = query(rewardsRef, where("__name__", "in", batch))
+              const snap = await getDocs(q)
+              rewards = rewards.concat(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
+            }
+            setUserAchievements(rewards)
+          } else {
+            setUserAchievements([])
+          }
+          // --- END NEW ---
         } else {
           setError("User data not found")
         }
@@ -575,13 +597,13 @@ export function ProfileModal({ isOpen, onClose, userId, readOnly = false }: Prof
 
                   {activeTab === "achievements" && (
                     <div>
-                      {userStats.achievements && userStats.achievements.length > 0 ? (
+                      {userAchievements && userAchievements.length > 0 ? (
                         <div className="grid grid-cols-1 gap-3">
-                          {userStats.achievements.map((ach, idx) => (
-                            <div key={idx} className="flex items-center gap-3 bg-gray-100 dark:bg-gray-700/50 p-3 rounded-lg">
+                          {userAchievements.map((ach, idx) => (
+                            <div key={ach.id || idx} className="flex items-center gap-3 bg-gray-100 dark:bg-gray-700/50 p-3 rounded-lg">
                               {ach.image && <img src={ach.image} alt={ach.name} className="w-8 h-8 rounded" />}
                               <div>
-                                <div className="font-semibold text-gray-800 dark:text-white">{typeof ach === 'string' ? ach : ach.name}</div>
+                                <div className="font-semibold text-gray-800 dark:text-white">{ach.name}</div>
                                 {ach.rarity && (
                                   <span className="text-xs font-medium text-purple-500 mr-2">{ach.rarity}</span>
                                 )}
