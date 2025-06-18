@@ -40,6 +40,7 @@ export function SettingsModal({
   onApplySettings,
 }: SettingsModalProps) {
   const [hasChanges, setHasChanges] = useState(false)
+  const [panicLink, setPanicLink] = useState<string>("")
 
   // Check if settings have changed
   useEffect(() => {
@@ -96,6 +97,18 @@ export function SettingsModal({
     onClose()
   }
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setPanicLink(localStorage.getItem("minesweeper_panic_link") || "")
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("minesweeper_panic_link", panicLink)
+    }
+  }, [panicLink])
+
   if (!isOpen) return null
 
   const difficulty = getDifficulty(tempSettings)
@@ -118,7 +131,7 @@ export function SettingsModal({
 
         <CardContent className="space-y-6">
           {/* Game field settings */}
-          <div className="mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+          <div className="mb-8 pb-8 border-b border-gray-200 dark:border-gray-700 space-y-6">
             <div>
               <Label className={`${hasChanges ? "text-yellow-500" : "text-gray-800 dark:text-gray-200"}`}>
                 Width: {tempSettings.width}
@@ -299,12 +312,8 @@ export function SettingsModal({
               type="url"
               className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
               placeholder="https://example.com"
-              value={typeof window !== 'undefined' ? (localStorage.getItem('minesweeper_panic_link') || '') : ''}
-              onChange={e => {
-                if (typeof window !== 'undefined') {
-                  localStorage.setItem('minesweeper_panic_link', e.target.value)
-                }
-              }}
+              value={panicLink}
+              onChange={e => setPanicLink(e.target.value)}
             />
             <p className="text-xs text-gray-500 dark:text-gray-400">
               This link will be used for the Panic button. Does not affect game field settings.
