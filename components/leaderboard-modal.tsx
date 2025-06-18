@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import type React from "react"
 
 import { Button } from "@/components/ui/button"
@@ -84,15 +84,20 @@ const formatNumber = (num: number) => {
 function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
   const [showProfile, setShowProfile] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  // Для предотвращения закрытия при наведении
+  const hoverRef = useRef<HTMLDivElement>(null);
+  // Не закрывать окно, пока мышь внутри
   useEffect(() => {
     if (!isHovered) return;
     const onMouseMove = (e: MouseEvent) => {
-      // Если мышь вне области карточки и кнопки, закрыть
-      const el = document.getElementById('user-hover-card');
+      const el = hoverRef.current;
       if (el && !el.contains(e.target as Node)) {
         setIsHovered(false);
-        onClose();
+        // Не вызываем onClose сразу, а только если мышь ушла надолго
+        setTimeout(() => {
+          if (!el.contains(document.elementFromPoint(e.clientX, e.clientY))) {
+            onClose();
+          }
+        }, 200);
       }
     };
     document.addEventListener('mousemove', onMouseMove);
@@ -108,6 +113,7 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
   return (
     <div
       id="user-hover-card"
+      ref={hoverRef}
       className="fixed z-[100] pointer-events-auto"
       style={{
         left: `${Math.min(position.x, window.innerWidth - 420)}px`,
@@ -141,16 +147,23 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
                   {user.customRole ? (
                     <Badge
                       style={{
-                        backgroundColor: `${user.customRoleColor}20`,
-                        color: user.customRoleColor,
-                        borderColor: user.customRoleColor,
+                        backgroundColor: '#181C23',
+                        color: user.customRoleColor || '#fff',
+                        borderColor: user.customRoleColor || '#222',
                       }}
-                      className="text-xs border"
+                      className="text-xs border-0 px-2 py-0.5 rounded-full font-semibold shadow-none"
                     >
                       {user.customRole}
                     </Badge>
                   ) : (
-                    <Badge className={`text-xs ${getRoleColor(user.role)}`}>{getRoleName(user.role)}</Badge>
+                    user.role !== "user" && (
+                      <Badge
+                        className={`text-xs px-2 py-0.5 rounded-full font-semibold shadow-none border-0 bg-gray-900/90 dark:bg-gray-900/90 ${getRoleColor(user.role)}`}
+                        style={{backgroundColor: '#181C23'}}
+                      >
+                        {getRoleName(user.role)}
+                      </Badge>
+                    )
                   )}
                   <div className="flex items-center gap-1">
                     <Star className="h-3 w-3 text-yellow-500" />
@@ -223,12 +236,12 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
             <div>
               <h4 className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Recent Achievements</h4>
               <div className="flex flex-wrap gap-1">
-                {user.achievements.slice(0, 3).map((achievement, index) => (
+                {(user.achievements || []).slice(0, 3).map((achievement, index) => (
                   <Badge key={index} variant="secondary" className="text-xs">
-                    {achievement}
+                    {typeof achievement === 'string' ? achievement : achievement.name}
                   </Badge>
                 ))}
-                {user.achievements.length > 3 && (
+                {user.achievements && user.achievements.length > 3 && (
                   <span className="text-xs text-gray-500">+{user.achievements.length - 3} more</span>
                 )}
               </div>
