@@ -191,6 +191,34 @@ export function ProfileModal({ isOpen, onClose, userId, readOnly = false }: Prof
         const userDoc = await getDoc(doc(db, "users", userId))
         if (userDoc.exists()) {
           const userData = userDoc.data()
+          // --- DEBUG: log userData ---
+          console.log('Loaded userData:', userData)
+          // --- END DEBUG ---
+          // --- Ensure achievements field exists ---
+          let achievements: string[] = []
+          if (Array.isArray(userData.achievements)) {
+            achievements = userData.achievements.filter((id) => typeof id === 'string')
+          } else {
+            achievements = []
+          }
+          // --- Auto-add rewards if missing ---
+          // Найдём все id наград, которые есть у пользователя (например, в adminRewards)
+          let rewardIds: string[] = []
+          if (Array.isArray(userData.adminRewards)) {
+            rewardIds = userData.adminRewards.map((r: any) => r.id).filter((id: any) => typeof id === 'string')
+          }
+          // Добавим новые id в achievements, если их там нет
+          let updated = false
+          rewardIds.forEach((id) => {
+            if (id && !achievements.includes(id)) {
+              achievements.push(id)
+              updated = true
+            }
+          })
+          // Если achievements обновился, запишем в Firestore
+          if (updated) {
+            await updateDoc(doc(db, "users", userId), { achievements })
+          }
           setUserStats({
             userId: userData.userId || 0,
             username: userData.username || "Player",
@@ -208,19 +236,16 @@ export function ProfileModal({ isOpen, onClose, userId, readOnly = false }: Prof
             experience: userData.experience || 0,
             photoURL: userData.photoURL || null,
             cellsOpened: userData.cellsOpened || 0,
-            achievements: userData.achievements || [],
+            achievements: [], // всегда массив объектов, а не строк
           })
           setUsername(userData.username || "Player")
 
           // --- NEW: Load achievements from rewards collection ---
-          const achievementIds = userData.achievements || []
-          if (achievementIds.length > 0) {
-            // Firestore: where('__name__', 'in', [...ids])
+          if (achievements.length > 0) {
             const rewardsRef = collection(db, "rewards")
-            // Firestore ограничение: максимум 10 id за раз
             const batches = []
-            for (let i = 0; i < achievementIds.length; i += 10) {
-              batches.push(achievementIds.slice(i, i + 10))
+            for (let i = 0; i < achievements.length; i += 10) {
+              batches.push(achievements.slice(i, i + 10))
             }
             let rewards: any[] = []
             for (const batch of batches) {
@@ -228,6 +253,9 @@ export function ProfileModal({ isOpen, onClose, userId, readOnly = false }: Prof
               const snap = await getDocs(q)
               rewards = rewards.concat(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })))
             }
+            // --- DEBUG: log loaded rewards ---
+            console.log('Loaded rewards:', rewards)
+            // --- END DEBUG ---
             setUserAchievements(rewards)
           } else {
             setUserAchievements([])
@@ -243,7 +271,6 @@ export function ProfileModal({ isOpen, onClose, userId, readOnly = false }: Prof
         setLoading(false)
       }
     }
-
     if (isOpen) {
       fetchUserData()
     }
