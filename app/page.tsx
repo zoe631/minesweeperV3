@@ -1132,6 +1132,32 @@ export default function Minesweeper() {
           statistics={gameResult.statistics}
         />
       )}
+
+      {/* Social Links */}
+      <div className="fixed bottom-4 left-4 flex gap-3 z-50">
+        <a
+          href="https://github.com/pvplolpvp009/minesweeperV3"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900 hover:bg-gray-800 transition-colors border border-gray-800 shadow-lg"
+          title="GitHub"
+        >
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-gray-200">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.546 1.378.202 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.338 4.695-4.566 4.944.359.309.678.919.678 1.852 0 1.336-.012 2.417-.012 2.747 0 .268.18.579.688.481C19.138 20.203 22 16.447 22 12.021 22 6.484 17.523 2 12 2z" />
+          </svg>
+        </a>
+        <a
+          href="https://t.me/+feET4mPZIkgxMGEy"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900 hover:bg-gray-800 transition-colors border border-gray-800 shadow-lg"
+          title="Telegram Channel"
+        >
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-gray-200">
+            <path d="M9.036 16.477l-.398 3.934c.57 0 .818-.244 1.116-.537l2.676-2.547 5.553 4.057c1.017.561 1.74.266 1.993-.941l3.617-16.93c.33-1.527-.553-2.125-1.54-1.76L2.36 9.47c-1.49.584-1.472 1.418-.254 1.797l4.6 1.438 10.684-6.74c.504-.326.965-.145.586.181" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </a>
+      </div>
     </div>
   )
 }
