@@ -47,6 +47,12 @@ interface UserStats {
   experience: number
   photoURL?: string
   cellsOpened?: number
+  achievements?: Array<{
+    name: string
+    rarity?: string
+    description?: string
+    image?: string
+  }>;
 }
 
 const getRoleColor = (role: string) => {
@@ -167,7 +173,7 @@ const getLevelStyle = (level: number) => {
   }
 }
 
-export function ProfileModal({ isOpen, onClose, userId }: ProfileModalProps) {
+export function ProfileModal({ isOpen, onClose, userId, readOnly = false }: ProfileModalProps & { readOnly?: boolean }) {
   const [userStats, setUserStats] = useState<UserStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
@@ -202,6 +208,7 @@ export function ProfileModal({ isOpen, onClose, userId }: ProfileModalProps) {
             experience: userData.experience || 0,
             photoURL: userData.photoURL || null,
             cellsOpened: userData.cellsOpened || 0,
+            achievements: userData.achievements || [],
           })
           setUsername(userData.username || "Player")
         } else {
@@ -314,16 +321,22 @@ export function ProfileModal({ isOpen, onClose, userId }: ProfileModalProps) {
                             className="max-w-xs"
                             placeholder="Enter username"
                           />
-                          <Button size="sm" onClick={handleSaveUsername}>
-                            <Save className="h-4 w-4 mr-1" /> Save
-                          </Button>
+                          {/* Кнопки редактирования скрывать если readOnly */}
+                          {(!readOnly && editMode) && (
+                            <Button size="sm" onClick={handleSaveUsername}>
+                              <Save className="h-4 w-4 mr-1" /> Save
+                            </Button>
+                          )}
                         </div>
                       ) : (
                         <div className="flex items-center gap-2">
                           <h3 className="text-xl font-bold text-gray-800 dark:text-white">{userStats.username}</h3>
-                          <Button size="icon" variant="ghost" onClick={() => setEditMode(true)} className="h-7 w-7">
-                            <Edit2 className="h-3.5 w-3.5" />
-                          </Button>
+                          {/* Кнопки редактирования скрывать если readOnly */}
+                          {(!readOnly && !editMode) && (
+                            <Button size="icon" variant="ghost" onClick={() => setEditMode(true)} className="h-7 w-7">
+                              <Edit2 className="h-3.5 w-3.5" />
+                            </Button>
+                          )}
                         </div>
                       )}
                       <p className="text-sm text-gray-500 dark:text-gray-400">{maskEmail(userStats.email)}</p>
@@ -394,7 +407,7 @@ export function ProfileModal({ isOpen, onClose, userId }: ProfileModalProps) {
                             className="h-full rounded-full"
                             style={{
                               width: `${levelInfo.progress}%`,
-                              background: levelStyle.background,
+                              background: (levelStyle as any).background || undefined,
                             }}
                           ></div>
                         </div>
@@ -561,16 +574,27 @@ export function ProfileModal({ isOpen, onClose, userId }: ProfileModalProps) {
                   )}
 
                   {activeTab === "achievements" && (
-                    <div className="py-8 text-center text-gray-500 dark:text-gray-400">
-                      <div className="mx-auto w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center mb-4">
-                        <Trophy className="h-8 w-8 text-gray-400 dark:text-gray-500" />
-                      </div>
-                      <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Achievements Coming Soon
-                      </h3>
-                      <p className="max-w-md mx-auto">
-                        Complete special challenges to earn achievements and showcase your skills!
-                      </p>
+                    <div>
+                      {userStats.achievements && userStats.achievements.length > 0 ? (
+                        <div className="grid grid-cols-1 gap-3">
+                          {userStats.achievements.map((ach, idx) => (
+                            <div key={idx} className="flex items-center gap-3 bg-gray-100 dark:bg-gray-700/50 p-3 rounded-lg">
+                              {ach.image && <img src={ach.image} alt={ach.name} className="w-8 h-8 rounded" />}
+                              <div>
+                                <div className="font-semibold text-gray-800 dark:text-white">{typeof ach === 'string' ? ach : ach.name}</div>
+                                {ach.rarity && (
+                                  <span className="text-xs font-medium text-purple-500 mr-2">{ach.rarity}</span>
+                                )}
+                                {ach.description && (
+                                  <div className="text-xs text-gray-500 dark:text-gray-300">{ach.description}</div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="py-8 text-center text-gray-500 dark:text-gray-400">No achievements yet</div>
+                      )}
                     </div>
                   )}
                 </div>

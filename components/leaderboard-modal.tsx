@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { X, Trophy, Bomb, Target, Crown, Medal, Award, Star, Coins, Gamepad, RefreshCw } from "lucide-react"
 import { db } from "@/lib/firebase"
 import { collection, query, orderBy, limit, getDocs, where, Timestamp } from "firebase/firestore"
+import { ProfileModal } from "@/components/profile-modal"
 
 interface LeaderboardModalProps {
   isOpen: boolean
@@ -81,19 +82,47 @@ const formatNumber = (num: number) => {
 }
 
 function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
+  const [showProfile, setShowProfile] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  // Для предотвращения закрытия при наведении
+  useEffect(() => {
+    if (!isHovered) return;
+    const onMouseMove = (e: MouseEvent) => {
+      // Если мышь вне области карточки и кнопки, закрыть
+      const el = document.getElementById('user-hover-card');
+      if (el && !el.contains(e.target as Node)) {
+        setIsHovered(false);
+        onClose();
+      }
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    return () => document.removeEventListener('mousemove', onMouseMove);
+  }, [isHovered, onClose]);
+
+  if (showProfile) {
+    return (
+      <ProfileModal isOpen={true} onClose={() => setShowProfile(false)} userId={user.id} readOnly={true} />
+    );
+  }
+
   return (
     <div
-      className="fixed z-[100] pointer-events-none"
+      id="user-hover-card"
+      className="fixed z-[100] pointer-events-auto"
       style={{
-        left: `${Math.min(position.x, window.innerWidth - 320)}px`,
-        top: `${Math.max(position.y - 200, 10)}px`,
+        left: `${Math.min(position.x, window.innerWidth - 420)}px`,
+        top: `${Math.max(position.y - 220, 10)}px`,
+        width: 400,
+        transition: 'box-shadow 0.2s',
       }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <Card className="w-80 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-xl pointer-events-auto">
+      <Card className="w-full bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-2xl pointer-events-auto p-2">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
                 {user.photoURL ? (
                   <img
                     src={user.photoURL || "/placeholder.svg"}
@@ -101,13 +130,13 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <span className="text-lg font-bold text-gray-600 dark:text-gray-300">
+                  <span className="text-2xl font-bold text-gray-600 dark:text-gray-300">
                     {user.username.charAt(0).toUpperCase()}
                   </span>
                 )}
               </div>
               <div>
-                <h3 className="font-bold text-gray-800 dark:text-white">{user.username}</h3>
+                <h3 className="font-bold text-lg text-gray-800 dark:text-white">{user.username}</h3>
                 <div className="flex items-center gap-2">
                   {user.customRole ? (
                     <Badge
@@ -135,7 +164,6 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
             </Button>
           </div>
         </CardHeader>
-
         <CardContent className="space-y-4">
           {/* Quick Stats */}
           <div className="grid grid-cols-2 gap-3">
@@ -146,7 +174,6 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
               </div>
               <p className="text-sm font-bold text-gray-800 dark:text-white">{formatNumber(user.coins)}</p>
             </div>
-
             <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded">
               <div className="flex items-center gap-1 mb-1">
                 <Trophy className="h-3 w-3 text-green-500" />
@@ -154,7 +181,6 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
               </div>
               <p className="text-sm font-bold text-gray-800 dark:text-white">{user.winRate.toFixed(1)}%</p>
             </div>
-
             <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded">
               <div className="flex items-center gap-1 mb-1">
                 <Bomb className="h-3 w-3 text-red-500" />
@@ -162,7 +188,6 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
               </div>
               <p className="text-sm font-bold text-gray-800 dark:text-white">{formatNumber(user.minesDefused)}</p>
             </div>
-
             <div className="bg-gray-50 dark:bg-gray-700 p-2 rounded">
               <div className="flex items-center gap-1 mb-1">
                 <Target className="h-3 w-3 text-blue-500" />
@@ -171,7 +196,6 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
               <p className="text-sm font-bold text-gray-800 dark:text-white">{formatNumber(user.cellsOpened)}</p>
             </div>
           </div>
-
           {/* Admin Rewards */}
           {user.adminRewards && user.adminRewards.length > 0 && (
             <div>
@@ -194,7 +218,6 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
               </div>
             </div>
           )}
-
           {/* Achievements Preview */}
           {user.achievements && user.achievements.length > 0 && (
             <div>
@@ -211,10 +234,15 @@ function UserHoverCard({ user, position, onClose }: UserHoverCardProps) {
               </div>
             </div>
           )}
+          <div className="flex justify-end pt-2">
+            <Button size="sm" variant="outline" onClick={() => setShowProfile(true)}>
+              View Full Profile
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
 
 export function LeaderboardModal({ isOpen, onClose }: LeaderboardModalProps) {
