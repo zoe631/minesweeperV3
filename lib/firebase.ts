@@ -3,14 +3,14 @@ import { getAuth, GoogleAuthProvider, setPersistence, browserLocalPersistence } 
 import { getFirestore } from "firebase/firestore"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCisDtdn_ByiuPA0c72pXIPniHrB2LrHns",
-  authDomain: "minesweeper-4309b.firebaseapp.com",
-  databaseURL: "https://minesweeper-4309b-default-rtdb.firebaseio.com",
-  projectId: "minesweeper-4309b",
-  storageBucket: "minesweeper-4309b.firebasestorage.app",
-  messagingSenderId: "237441993856",
-  appId: "1:237441993856:web:b678646f13a686ce79ea65",
-  measurementId: "G-QTDQRM8CVZ",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
 const app = initializeApp(firebaseConfig)
