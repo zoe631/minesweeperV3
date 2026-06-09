@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { X } from "lucide-react"
+import { useTranslation } from "@/lib/i18n/LanguageContext"
 
 interface AuthModalProps {
   isOpen: boolean
@@ -50,6 +51,7 @@ const getRoleName = (role: string) => {
 }
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+  const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
   const [showUsernamePrompt, setShowUsernamePrompt] = useState(false)
@@ -212,18 +214,18 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
         <Card className="w-full max-w-md mx-4">
           <CardHeader>
-            <CardTitle className="text-center">Choose Username</CardTitle>
+            <CardTitle className="text-center">{t("auth.chooseUsername")}</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleUsernameSubmit} className="space-y-4">
               <div>
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">{t("auth.username")}</Label>
                 <Input
                   id="username"
                   type="text"
                   value={newUsername}
                   onChange={(e) => setNewUsername(e.target.value)}
-                  placeholder="Enter your username"
+                  placeholder=""
                   required
                 />
               </div>
@@ -233,7 +235,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white"
                 disabled={isLoading}
               >
-                {isLoading ? "Creating..." : "Complete Registration"}
+                {isLoading ? t("auth.creatingAccount") : t("auth.completeRegistration")}
               </Button>
             </form>
           </CardContent>
@@ -246,7 +248,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <Card className="w-full max-w-md mx-4">
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Authentication</CardTitle>
+          <CardTitle>{t("auth.title")}</CardTitle>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
@@ -254,31 +256,31 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         <CardContent>
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Register</TabsTrigger>
+              <TabsTrigger value="login">{t("auth.login")}</TabsTrigger>
+              <TabsTrigger value="register">{t("auth.register")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="login" className="space-y-4">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <Label htmlFor="login-email">Email</Label>
+                  <Label htmlFor="login-email">{t("auth.email")}</Label>
                   <Input
                     id="login-email"
                     type="email"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder=""
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="login-password">Password</Label>
+                  <Label htmlFor="login-password">{t("auth.password")}</Label>
                   <Input
                     id="login-password"
                     type="password"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder="Enter your password"
+                    placeholder=""
                     required
                   />
                 </div>
@@ -288,7 +290,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Signing in..." : "Sign In"}
+                  {isLoading ? t("auth.signingIn") : t("auth.signIn")}
                 </Button>
               </form>
 
@@ -297,7 +299,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                  <span className="bg-background px-2 text-muted-foreground">{t("auth.continueWith")}</span>
                 </div>
               </div>
 
@@ -326,42 +328,42 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     fill="#EA4335"
                   />
                 </svg>
-                Continue with Google
+                {t("auth.continueGoogle")}
               </Button>
             </TabsContent>
 
             <TabsContent value="register" className="space-y-4">
               <form onSubmit={handleRegister} className="space-y-4">
                 <div>
-                  <Label htmlFor="register-username">Username</Label>
+                  <Label htmlFor="register-username">{t("auth.username")}</Label>
                   <Input
                     id="register-username"
                     type="text"
                     value={registerUsername}
                     onChange={(e) => setRegisterUsername(e.target.value)}
-                    placeholder="Choose a username"
+                    placeholder=""
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="register-email">Email</Label>
+                  <Label htmlFor="register-email">{t("auth.email")}</Label>
                   <Input
                     id="register-email"
                     type="email"
                     value={registerEmail}
                     onChange={(e) => setRegisterEmail(e.target.value)}
-                    placeholder="Enter your email"
+                    placeholder=""
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="register-password">Password</Label>
+                  <Label htmlFor="register-password">{t("auth.password")}</Label>
                   <Input
                     id="register-password"
                     type="password"
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
-                    placeholder="Create a password"
+                    placeholder=""
                     required
                   />
                 </div>
@@ -371,7 +373,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Creating account..." : "Create Account"}
+                  {isLoading ? t("auth.creatingAccount") : t("auth.createAccount")}
                 </Button>
               </form>
 
@@ -380,7 +382,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                  <span className="bg-background px-2 text-muted-foreground">{t("auth.continueWith")}</span>
                 </div>
               </div>
 
@@ -409,7 +411,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     fill="#EA4335"
                   />
                 </svg>
-                Continue with Google
+                {t("auth.continueGoogle")}
               </Button>
             </TabsContent>
           </Tabs>

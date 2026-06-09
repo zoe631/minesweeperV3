@@ -31,6 +31,7 @@ import { doc, updateDoc, increment, getDoc } from "firebase/firestore"
 import { GameResultModal } from "@/components/game-result-modal"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { FeedbackButton } from "@/components/feedback-button"
+import { useTranslation } from "@/lib/i18n/LanguageContext"
 
 interface Cell {
   isMine: boolean
@@ -93,7 +94,7 @@ const incrementVersion = () => {
 }
 
 export default function Minesweeper() {
-  // All existing state and functions remain the same...
+  const { t } = useTranslation()
   const [isDark, setIsDark] = useState(true)
   const [user, setUser] = useState<FirebaseUser | null>(null)
   const [showAuthModal, setShowAuthModal] = useState(false)
@@ -130,24 +131,16 @@ export default function Minesweeper() {
     rewards: { coins: number; experience: number }
     statistics: { winRateChange: number; cellsOpened: number; minesDefused: number; gamesPlayedChange: number }
   } | null>(null)
-  const [previousStats, setPreviousStats] = useState<{
-    gamesPlayed: number
-    gamesWon: number
-  } | null>(null)
   const [maintenanceMode, setMaintenanceMode] = useState(false)
   const [maintenanceReason, setMaintenanceReason] = useState("")
   const [userRole, setUserRole] = useState<string>("")
-  const [currentVersion, setCurrentVersion] = useState("0.0.3.4") // Default version
   const [isClient, setIsClient] = useState(false)
   const [accessRestriction, setAccessRestriction] = useState<string>("none")
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
 
-  // Handle client-side mounting and version increment
+  // Handle client-side mounting
   useEffect(() => {
     setIsClient(true)
-    // Only get current version on client side
-    const version = getCurrentVersion()
-    setCurrentVersion(version)
   }, [])
 
   // Auth state listener
@@ -362,7 +355,6 @@ export default function Minesweeper() {
 
       // Only track stats for standard presets
       if (!isStandardPreset(gameState.settings)) {
-        console.log("Custom settings detected - stats not tracked")
         return
       }
 
@@ -825,7 +817,7 @@ export default function Minesweeper() {
       <div className="container mx-auto p-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 drop-shadow-sm tracking-tight">Minesweeper</h1>
+          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 drop-shadow-sm tracking-tight">{t("header.title")}</h1>
 
           <div className="flex items-center gap-4">
             {/* Game Info */}
@@ -860,11 +852,8 @@ export default function Minesweeper() {
                 className="px-4 text-gray-800 dark:text-gray-200 border-white/20 dark:border-white/10 bg-white/50 dark:bg-black/20 backdrop-blur-md hover:bg-white/80 dark:hover:bg-white/10 transition-all rounded-xl"
               >
                 <Trophy className="h-4 w-4 mr-2 text-yellow-500 drop-shadow-md" />
-                Leaderboard
+                {t("header.leaderboard")}
               </Button>
-              <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
-                View Global Rankings
-              </div>
             </div>
 
             {/* User Info */}
@@ -879,7 +868,7 @@ export default function Minesweeper() {
                     {user.displayName || user.email}
                   </span>
                   <div className="flex items-center pl-2 border-l border-gray-300 dark:border-gray-600 ml-2">
-                    <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-red-500/20 hover:text-red-500 transition-colors" onClick={(e) => { e.stopPropagation(); handleSignOut(); }} title="Sign Out">
+                    <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-red-500/20 hover:text-red-500 transition-colors" onClick={(e) => { e.stopPropagation(); handleSignOut(); }} title={t("header.logout")}>
                       <LogOut className="h-4 w-4" />
                     </Button>
                   </div>
@@ -892,7 +881,7 @@ export default function Minesweeper() {
                 className="px-4 text-gray-800 dark:text-gray-200 border-white/20 dark:border-white/10 bg-white/50 dark:bg-black/20 backdrop-blur-md hover:bg-white/80 dark:hover:bg-white/10 transition-all rounded-xl"
               >
                 <User className="h-4 w-4 mr-2" />
-                Sign In
+                {t("header.signIn")}
               </Button>
             )}
 
@@ -913,8 +902,7 @@ export default function Minesweeper() {
                 <div className="text-sm">
                   <p className="font-medium text-yellow-800 dark:text-yellow-200">Custom Difficulty Active</p>
                   <p className="text-yellow-700 dark:text-yellow-300">
-                    You're playing with custom settings. Statistics and leaderboard progress won't be tracked. Use
-                    standard presets (Easy, Medium, Hard, Expert) to compete!
+                    {t("messages.customWarning")}
                   </p>
                 </div>
               </div>
@@ -923,7 +911,7 @@ export default function Minesweeper() {
         )}
 
         {/* Game Controls */}
-        <div className="flex justify-center gap-4 mb-6 flex-wrap">
+        <div className="flex justify-center gap-4 mb-6 flex-wrap relative z-50">
           {/* Restart Button */}
           <div className="group relative">
             <Button
@@ -935,7 +923,7 @@ export default function Minesweeper() {
               <RotateCcw className="h-5 w-5 text-gray-700 dark:text-gray-200 drop-shadow-sm" />
             </Button>
             <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
-              Restart Game
+              {t("controls.restart")}
             </div>
           </div>
 
@@ -951,7 +939,7 @@ export default function Minesweeper() {
               <Lightbulb className={`h-5 w-5 ${hintsRemaining > 0 ? "text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]" : "text-gray-400"}`} />
             </Button>
             <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
-              {hintsRemaining > 0 ? `Use Hint (${hintsRemaining} left)` : "No Hints Left"}
+              {hintsRemaining > 0 ? `${t("controls.hint")} (${hintsRemaining})` : t("controls.noHints")}
             </div>
           </div>
 
@@ -966,7 +954,7 @@ export default function Minesweeper() {
               <Zap className="h-5 w-5 text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
             </Button>
             <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
-              Panic!
+              {t("controls.panic")}
             </div>
           </div>
 
@@ -981,7 +969,7 @@ export default function Minesweeper() {
               <Settings className="h-5 w-5 text-gray-700 dark:text-gray-200" />
             </Button>
             <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
-              Game Settings
+              {t("controls.settings")}
             </div>
           </div>
 
@@ -998,7 +986,7 @@ export default function Minesweeper() {
                 <ZoomOut className="h-4 w-4 text-gray-700 dark:text-gray-200" />
               </Button>
               <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
-                Zoom Out
+                {t("controls.zoomOut")}
               </div>
             </div>
 
@@ -1021,7 +1009,7 @@ export default function Minesweeper() {
                 <ZoomIn className="h-4 w-4 text-gray-700 dark:text-gray-200" />
               </Button>
               <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
-                Zoom In
+                {t("controls.zoomIn")}
               </div>
             </div>
           </div>
@@ -1104,13 +1092,6 @@ export default function Minesweeper() {
         </div>
       </div>
 
-      {/* Version Counter - only show on client side */}
-      {isClient && (
-        <div className="fixed bottom-4 right-4 text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded border border-gray-200 dark:border-gray-700">
-          v{currentVersion}
-        </div>
-      )}
-
       {/* Feedback Button */}
       <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} />
       {user && <ProfileModal isOpen={showProfileModal} onClose={() => setShowProfileModal(false)} userId={user.uid} />}
@@ -1135,17 +1116,6 @@ export default function Minesweeper() {
 
       {/* Social & Feedback Buttons */}
       <div className="fixed bottom-4 left-4 flex gap-2 z-50">
-        <a
-          href="https://github.com/pvplolpvp009/minesweeperV3"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900 hover:bg-gray-800 transition-colors border border-gray-800 shadow-lg"
-          title="GitHub"
-        >
-          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-gray-200">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2C6.477 2 2 6.484 2 12.021c0 4.428 2.865 8.184 6.839 9.504.5.092.682-.217.682-.483 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.342-3.369-1.342-.454-1.154-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.004.07 1.532 1.032 1.532 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.339-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.295 2.748-1.025 2.748-1.025.546 1.378.202 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.847-2.338 4.695-4.566 4.944.359.309.678.919.678 1.852 0 1.336-.012 2.417-.012 2.747 0 .268.18.579.688.481C19.138 20.203 22 16.447 22 12.021 22 6.484 17.523 2 12 2z" />
-          </svg>
-        </a>
         <a
           href="https://t.me/+feET4mPZIkgxMGEy"
           target="_blank"

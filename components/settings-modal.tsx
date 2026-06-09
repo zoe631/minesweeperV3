@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { X, Settings, AlertTriangle } from "lucide-react"
+import { useTranslation } from "@/lib/i18n/LanguageContext"
 
 interface GameSettings {
   width: number
@@ -109,6 +110,8 @@ export function SettingsModal({
     }
   }, [panicLink])
 
+  const { language, setLanguage, t } = useTranslation()
+
   if (!isOpen) return null
 
   const difficulty = getDifficulty(tempSettings)
@@ -122,7 +125,7 @@ export function SettingsModal({
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
             <Settings className="h-5 w-5" />
-            Game Settings
+            {t("settings.title")}
           </CardTitle>
           <Button variant="ghost" size="icon" onClick={handleClose}>
             <X className="h-4 w-4" />
@@ -135,7 +138,7 @@ export function SettingsModal({
             <div className="flex-1 space-y-6 border-b-0 md:border-b-0 md:border-r md:pr-8 border-gray-200 dark:border-gray-700">
               <div>
                 <Label className={`${hasChanges ? "text-yellow-500" : "text-gray-800 dark:text-gray-200"}`}>
-                  Width: {tempSettings.width}
+                  {t("settings.width")}: {tempSettings.width}
                 </Label>
                 <Slider
                   value={[tempSettings.width]}
@@ -155,7 +158,7 @@ export function SettingsModal({
 
               <div>
                 <Label className={`${hasChanges ? "text-yellow-500" : "text-gray-800 dark:text-gray-200"}`}>
-                  Height: {tempSettings.height}
+                  {t("settings.height")}: {tempSettings.height}
                 </Label>
                 <Slider
                   value={[tempSettings.height]}
@@ -175,7 +178,7 @@ export function SettingsModal({
 
               <div>
                 <Label className={`${hasChanges ? "text-yellow-500" : "text-gray-800 dark:text-gray-200"}`}>
-                  Total Mines: {tempSettings.totalMines}
+                  {t("settings.totalMines")}: {tempSettings.totalMines}
                 </Label>
                 <Slider
                   value={[tempSettings.totalMines]}
@@ -195,13 +198,13 @@ export function SettingsModal({
               {/* Difficulty Display */}
               <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Difficulty</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">{t("settings.difficulty")}</span>
                   <span className={`text-lg font-bold ${difficultyColor}`}>{difficulty}%</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className={`text-sm font-semibold ${difficultyColor}`}>{difficultyLevel}</span>
+                  <span className={`text-sm font-semibold ${difficultyColor}`}>{t("settings.difficulty." + difficultyLevel.toLowerCase())}</span>
                   <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {tempSettings.totalMines} mines / {tempSettings.width * tempSettings.height} cells
+                    {t("settings.minesPerCells", tempSettings.totalMines, tempSettings.width * tempSettings.height)}
                   </span>
                 </div>
               </div>
@@ -212,10 +215,9 @@ export function SettingsModal({
                   <div className="flex items-start gap-2">
                     <AlertTriangle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
                     <div className="text-sm">
-                      <p className="font-medium text-yellow-800 dark:text-yellow-200">Custom Settings</p>
+                      <p className="font-medium text-yellow-800 dark:text-yellow-200">{t("settings.customSettings")}</p>
                       <p className="text-yellow-700 dark:text-yellow-300">
-                        Statistics will not be tracked for custom difficulty settings. Use standard presets to compete on
-                        leaderboards.
+                        {t("settings.customSettingsDesc")}
                       </p>
                     </div>
                   </div>
@@ -292,33 +294,57 @@ export function SettingsModal({
               {/* Action Buttons */}
               <div className="flex gap-3 pt-4">
                 <Button variant="outline" onClick={handleClose} className="flex-1">
-                  Close
+                  {t("settings.close")}
                 </Button>
                 <Button
                   onClick={handleApply}
                   disabled={!hasChanges}
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-600 dark:hover:bg-blue-700 dark:text-white disabled:opacity-50"
                 >
-                  Apply Settings
+                  {t("settings.apply")}
                 </Button>
               </div>
 
-              {hasChanges && <p className="text-xs text-yellow-500 text-center">You have unsaved changes</p>}
+              {hasChanges && <p className="text-xs text-yellow-500 text-center">{t("settings.unsavedChanges")}</p>}
             </div>
 
-            {/* Panic button settings */}
-            <div className="w-full md:w-72 flex-shrink-0 space-y-2 border-t pt-6 md:border-t-0 md:pt-0">
-              <Label className="text-gray-800 dark:text-gray-200">Panic Button Link</Label>
-              <input
-                type="url"
-                className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
-                placeholder="https://example.com"
-                value={panicLink}
-                onChange={e => setPanicLink(e.target.value)}
-              />
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                This link will be used for the Panic button. Does not affect game field settings.
-              </p>
+            {/* Language and Panic button settings */}
+            <div className="w-full md:w-72 flex-shrink-0 space-y-6 border-t pt-6 md:border-t-0 md:pt-0">
+              <div className="space-y-2">
+                <Label className="text-gray-800 dark:text-gray-200">{t("settings.language")}</Label>
+                <div className="flex gap-2">
+                  <Button 
+                    variant={language === "en" ? "default" : "outline"}
+                    onClick={() => setLanguage("en")}
+                    className="flex-1"
+                    size="sm"
+                  >
+                    English
+                  </Button>
+                  <Button 
+                    variant={language === "ru" ? "default" : "outline"}
+                    onClick={() => setLanguage("ru")}
+                    className="flex-1"
+                    size="sm"
+                  >
+                    Русский
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-gray-800 dark:text-gray-200">{t("settings.panicLink")}</Label>
+                <input
+                  type="url"
+                  className="w-full p-2 rounded bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                  placeholder="https://example.com"
+                  value={panicLink}
+                  onChange={e => setPanicLink(e.target.value)}
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {t("settings.panicLinkDesc")}
+                </p>
+              </div>
             </div>
           </div>
         </CardContent>

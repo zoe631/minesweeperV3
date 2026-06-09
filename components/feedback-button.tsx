@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MessageSquare, X, Send } from "lucide-react"
 import { auth, db } from "@/lib/firebase"
 import { collection, addDoc, Timestamp } from "firebase/firestore"
+import { useTranslation } from "@/lib/i18n/LanguageContext"
 
 interface FeedbackButtonProps {
   userRole?: string
@@ -20,6 +21,7 @@ interface FeedbackButtonProps {
 }
 
 export function FeedbackButton({ userRole, isOpen: externalIsOpen, onOpen, onClose }: FeedbackButtonProps) {
+  const { t } = useTranslation()
   const [internalOpen, setInternalOpen] = useState(false)
   const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalOpen
 
@@ -70,7 +72,7 @@ export function FeedbackButton({ userRole, isOpen: externalIsOpen, onOpen, onClo
         }}
         variant="outline"
         className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-900 hover:bg-gray-800 transition-colors border border-gray-800 shadow-lg"
-        title="Send Feedback"
+        title={t("feedback.title")}
       >
         <MessageSquare className="h-5 w-5 text-gray-200" />
       </Button>
@@ -81,7 +83,7 @@ export function FeedbackButton({ userRole, isOpen: externalIsOpen, onOpen, onClo
     <div className="fixed bottom-4 left-4 z-50">
       <Card className="w-80 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 shadow-xl">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <CardTitle className="text-lg font-bold text-gray-800 dark:text-white">Send Feedback</CardTitle>
+          <CardTitle className="text-lg font-bold text-gray-800 dark:text-white">{t("feedback.title")}</CardTitle>
           <Button variant="ghost" size="icon" onClick={() => { if (onClose) onClose(); setInternalOpen(false) }} className="h-6 w-6">
             <X className="h-4 w-4" />
           </Button>
@@ -90,32 +92,32 @@ export function FeedbackButton({ userRole, isOpen: externalIsOpen, onOpen, onClo
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="category" className="text-gray-700 dark:text-gray-300">
-                Category
+                {t("feedback.category")}
               </Label>
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="bug">Bug Report</SelectItem>
-                  <SelectItem value="feature">Feature Request</SelectItem>
-                  <SelectItem value="improvement">Improvement</SelectItem>
-                  <SelectItem value="ui">UI/UX Issue</SelectItem>
-                  <SelectItem value="performance">Performance</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="bug">{t("feedback.bug")}</SelectItem>
+                  <SelectItem value="feature">{t("feedback.feature")}</SelectItem>
+                  <SelectItem value="improvement">{t("feedback.improvement")}</SelectItem>
+                  <SelectItem value="ui">{t("feedback.ui")}</SelectItem>
+                  <SelectItem value="performance">{t("feedback.performance")}</SelectItem>
+                  <SelectItem value="other">{t("feedback.other")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
               <Label htmlFor="feedback" className="text-gray-700 dark:text-gray-300">
-                Your Feedback
+                {t("feedback.yourFeedback")}
               </Label>
               <Textarea
                 id="feedback"
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
-                placeholder="Describe your issue, suggestion, or feedback..."
+                placeholder={t("feedback.placeholder")}
                 className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-800 dark:text-gray-200"
                 rows={4}
                 required
@@ -138,7 +140,7 @@ export function FeedbackButton({ userRole, isOpen: externalIsOpen, onOpen, onClo
                 className="flex-1"
                 disabled={isSubmitting}
               >
-                Cancel
+                {t("feedback.cancel")}
               </Button>
               <Button
                 type="submit"
@@ -150,7 +152,7 @@ export function FeedbackButton({ userRole, isOpen: externalIsOpen, onOpen, onClo
                 ) : (
                   <Send className="h-4 w-4 mr-2" />
                 )}
-                Send
+                {t("feedback.send")}
               </Button>
             </div>
           </form>
