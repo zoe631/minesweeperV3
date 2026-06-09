@@ -820,16 +820,16 @@ export default function Minesweeper() {
   // Only update the header section in the return statement
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 ${isDark ? "dark bg-gray-900" : "bg-gray-50"} relative`}
+      className={`min-h-screen transition-colors duration-500 ${isDark ? "dark bg-gradient-to-br from-slate-950 via-gray-900 to-zinc-950" : "bg-gradient-to-br from-gray-50 via-gray-100 to-slate-200"} relative`}
     >
       <div className="container mx-auto p-4">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">Minesweeper</h1>
+          <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500 drop-shadow-sm tracking-tight">Minesweeper</h1>
 
           <div className="flex items-center gap-4">
             {/* Game Info */}
-            <div className="flex items-center gap-4 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-lg">
+            <div className="flex items-center gap-4 bg-white/40 dark:bg-black/40 backdrop-blur-md border border-gray-200/50 dark:border-white/10 px-5 py-2.5 rounded-2xl shadow-sm">
               {/* Timer */}
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-gray-600 dark:text-gray-400" />
@@ -857,12 +857,12 @@ export default function Minesweeper() {
               <Button
                 variant="outline"
                 onClick={() => setShowLeaderboardModal(true)}
-                className="px-4 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                className="px-4 text-gray-800 dark:text-gray-200 border-white/20 dark:border-white/10 bg-white/50 dark:bg-black/20 backdrop-blur-md hover:bg-white/80 dark:hover:bg-white/10 transition-all rounded-xl"
               >
-                <Trophy className="h-4 w-4 mr-2 text-yellow-500" />
+                <Trophy className="h-4 w-4 mr-2 text-yellow-500 drop-shadow-md" />
                 Leaderboard
               </Button>
-              <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black dark:bg-white text-white dark:text-black px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+              <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
                 View Global Rankings
               </div>
             </div>
@@ -871,16 +871,16 @@ export default function Minesweeper() {
             {user ? (
               <div className="flex items-center gap-3">
                 <div
-                  className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  className="flex items-center gap-2 bg-white/40 dark:bg-black/40 backdrop-blur-md border border-gray-200/50 dark:border-white/10 px-4 py-2 rounded-xl cursor-pointer hover:bg-white/60 dark:hover:bg-white/10 transition-all shadow-sm group"
                   onClick={() => setShowProfileModal(true)}
                 >
-                  <UserCircle className="h-5 w-5 text-blue-500" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <UserCircle className="h-5 w-5 text-blue-500 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
                     {user.displayName || user.email}
                   </span>
-                  <div className="flex items-center">
-                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={handleSignOut} title="Sign Out">
-                      <LogOut className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  <div className="flex items-center pl-2 border-l border-gray-300 dark:border-gray-600 ml-2">
+                    <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-red-500/20 hover:text-red-500 transition-colors" onClick={(e) => { e.stopPropagation(); handleSignOut(); }} title="Sign Out">
+                      <LogOut className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
@@ -889,7 +889,7 @@ export default function Minesweeper() {
               <Button
                 variant="outline"
                 onClick={() => setShowAuthModal(true)}
-                className="px-4 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+                className="px-4 text-gray-800 dark:text-gray-200 border-white/20 dark:border-white/10 bg-white/50 dark:bg-black/20 backdrop-blur-md hover:bg-white/80 dark:hover:bg-white/10 transition-all rounded-xl"
               >
                 <User className="h-4 w-4 mr-2" />
                 Sign In
@@ -930,11 +930,11 @@ export default function Minesweeper() {
               variant="outline"
               size="icon"
               onClick={resetGame}
-              className="rounded-full w-12 h-12 transition-all duration-200 hover:scale-110 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              className="rounded-full w-12 h-12 transition-all duration-300 hover:scale-110 hover:shadow-lg border-white/20 bg-white/50 dark:bg-black/40 backdrop-blur-md hover:bg-white/80 dark:hover:bg-white/10"
             >
-              <RotateCcw className="h-5 w-5 text-gray-700 dark:text-gray-200" />
+              <RotateCcw className="h-5 w-5 text-gray-700 dark:text-gray-200 drop-shadow-sm" />
             </Button>
-            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black dark:bg-white text-white dark:text-black px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
               Restart Game
             </div>
           </div>
@@ -946,11 +946,11 @@ export default function Minesweeper() {
               size="icon"
               onClick={useHint}
               disabled={hintsRemaining <= 0}
-              className="rounded-full w-12 h-12 transition-all duration-200 hover:scale-110 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
+              className="rounded-full w-12 h-12 transition-all duration-300 hover:scale-110 hover:shadow-lg border-white/20 bg-white/50 dark:bg-black/40 backdrop-blur-md hover:bg-white/80 dark:hover:bg-white/10 disabled:opacity-50"
             >
-              <Lightbulb className={`h-5 w-5 ${hintsRemaining > 0 ? "text-yellow-500" : "text-gray-400"}`} />
+              <Lightbulb className={`h-5 w-5 ${hintsRemaining > 0 ? "text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]" : "text-gray-400"}`} />
             </Button>
-            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black dark:bg-white text-white dark:text-black px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
               {hintsRemaining > 0 ? `Use Hint (${hintsRemaining} left)` : "No Hints Left"}
             </div>
           </div>
@@ -961,11 +961,11 @@ export default function Minesweeper() {
               variant="outline"
               size="icon"
               onClick={panicSave}
-              className="rounded-full w-12 h-12 transition-all duration-200 hover:scale-110 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 border-red-200 dark:border-red-700"
+              className="rounded-full w-12 h-12 transition-all duration-300 hover:scale-110 hover:shadow-lg bg-red-500/10 hover:bg-red-500/20 border-red-500/30 backdrop-blur-md"
             >
-              <Zap className="h-5 w-5 text-red-600 dark:text-red-400" />
+              <Zap className="h-5 w-5 text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.6)]" />
             </Button>
-            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black dark:bg-white text-white dark:text-black px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
               Panic!
             </div>
           </div>
@@ -976,28 +976,28 @@ export default function Minesweeper() {
               variant="outline"
               size="icon"
               onClick={() => setShowSettingsModal(true)}
-              className="rounded-full w-12 h-12 transition-all duration-200 hover:scale-110 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              className="rounded-full w-12 h-12 transition-all duration-300 hover:scale-110 hover:shadow-lg border-white/20 bg-white/50 dark:bg-black/40 backdrop-blur-md hover:bg-white/80 dark:hover:bg-white/10"
             >
               <Settings className="h-5 w-5 text-gray-700 dark:text-gray-200" />
             </Button>
-            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black dark:bg-white text-white dark:text-black px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
               Game Settings
             </div>
           </div>
 
           {/* Zoom Controls */}
-          <div className="flex items-center gap-2 ml-2">
+          <div className="flex items-center gap-2 ml-2 bg-white/40 dark:bg-black/30 backdrop-blur-md rounded-full p-1 border border-white/10 shadow-sm">
             <div className="group relative">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
                 onClick={zoomOut}
                 disabled={zoomLevel <= 0.5}
-                className="rounded-full w-10 h-10 transition-all duration-200 hover:scale-110 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
+                className="rounded-full w-10 h-10 transition-all duration-200 hover:bg-white/50 dark:hover:bg-white/10 disabled:opacity-50"
               >
                 <ZoomOut className="h-4 w-4 text-gray-700 dark:text-gray-200" />
               </Button>
-              <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black dark:bg-white text-white dark:text-black px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+              <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
                 Zoom Out
               </div>
             </div>
@@ -1005,22 +1005,22 @@ export default function Minesweeper() {
             <Button
               variant="ghost"
               onClick={resetZoom}
-              className="px-2 h-8 text-xs text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="px-2 h-8 text-xs font-semibold text-gray-800 dark:text-gray-200 hover:bg-transparent"
             >
               {Math.round(zoomLevel * 100)}%
             </Button>
 
             <div className="group relative">
               <Button
-                variant="outline"
+                variant="ghost"
                 size="icon"
                 onClick={zoomIn}
                 disabled={zoomLevel >= 2.5}
-                className="rounded-full w-10 h-10 transition-all duration-200 hover:scale-110 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50"
+                className="rounded-full w-10 h-10 transition-all duration-200 hover:bg-white/50 dark:hover:bg-white/10 disabled:opacity-50"
               >
                 <ZoomIn className="h-4 w-4 text-gray-700 dark:text-gray-200" />
               </Button>
-              <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black dark:bg-white text-white dark:text-black px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+              <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-black/80 dark:bg-white/90 backdrop-blur-sm text-white dark:text-black px-3 py-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-50 shadow-xl">
                 Zoom In
               </div>
             </div>
@@ -1030,7 +1030,7 @@ export default function Minesweeper() {
         {/* Game Board */}
         <div className="w-full flex justify-center">
           <div
-            className="overflow-auto border-2 border-gray-200 dark:border-gray-700 rounded-lg relative"
+            className="overflow-auto border border-gray-200/50 dark:border-white/10 rounded-3xl relative bg-white/20 dark:bg-black/20 backdrop-blur-xl shadow-2xl"
             style={{
               width: "95vw",
               height: "75vh",
@@ -1040,7 +1040,7 @@ export default function Minesweeper() {
           >
             {/* Darkening overlay when game is over */}
             {gameState.gameStatus !== "playing" && (
-              <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none"></div>
+              <div className="absolute inset-0 bg-black/50 backdrop-blur-sm z-10 pointer-events-none transition-all duration-1000 rounded-3xl"></div>
             )}
             <div
               className="flex justify-center items-center min-h-full min-w-full p-16"
@@ -1056,9 +1056,9 @@ export default function Minesweeper() {
                   transformOrigin: "center",
                 }}
               >
-                <div className="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                <div className="p-6 bg-white/50 dark:bg-black/40 backdrop-blur-md rounded-2xl shadow-xl border border-gray-100/50 dark:border-white/5">
                   <div
-                    className="grid gap-[2px]"
+                    className="grid gap-[3px]"
                     style={{
                       gridTemplateColumns: `repeat(${gameState.settings.width}, minmax(0, 1fr))`,
                       gridTemplateRows: `repeat(${gameState.settings.height}, minmax(0, 1fr))`,
@@ -1070,14 +1070,14 @@ export default function Minesweeper() {
                           key={`${x}-${y}`}
                           className={`
     ${getCellSize()}
-    font-bold border border-gray-300 dark:border-gray-600 
-    transition-all duration-150 hover:scale-105
+    font-extrabold rounded-sm flex items-center justify-center
+    transition-all duration-200
     ${
       cell.isRevealed
         ? cell.isMine
-          ? "bg-red-500 text-white"
-          : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
-        : "bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
+          ? "bg-red-500/90 text-white shadow-[0_0_15px_rgba(239,68,68,0.8)] scale-105 z-10"
+          : "bg-black/5 dark:bg-white/5 text-gray-800 dark:text-gray-200 shadow-inner border border-transparent"
+        : "bg-gradient-to-br from-white to-gray-200 dark:from-gray-700 dark:to-gray-800 hover:-translate-y-[1px] hover:shadow-md border border-b-2 border-r-2 border-gray-300/50 dark:border-gray-600/50 shadow-sm"
     }
     ${getCellColor(cell)}
   `}
